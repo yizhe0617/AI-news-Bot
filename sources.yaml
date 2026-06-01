@@ -1,0 +1,27 @@
+rss:
+  - name: OpenAI Blog
+    url: https://openai.com/blog/rss.xml
+  - name: Google DeepMind Blog
+    url: https://deepmind.google/blog/rss.xml
+  - name: Google AI Blog
+    url: https://ai.googleblog.com/feeds/posts/default
+  - name: Google Research Blog
+    url: https://research.google/blog/rss/
+  - name: Hugging Face Blog
+    url: https://huggingface.co/blog/feed.xml
+  - name: LangChain Blog
+    url: https://blog.langchain.com/rss/
+  - name: Microsoft AI Blog
+    url: https://blogs.microsoft.com/ai/feed/
+  - name: NVIDIA Blog - AI
+    url: https://blogs.nvidia.com/blog/category/deep-learning/feed/
+  - name: Planet AI Aggregator
+    url: https://planet-ai.net/rss.xml
+
+arxiv:
+  categories:
+    - cs.AI
+    - cs.CL
+    - cs.LG
+    - cs.CV
+  max_results_per_category: 8
