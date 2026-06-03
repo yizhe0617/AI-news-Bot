@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build and send a daily AI digest.")
     parser.add_argument("--sources", default=str(SOURCES_PATH), help="Path to sources.yaml")
     parser.add_argument("--lookback-hours", type=int, default=30, help="How far back to collect items")
-    parser.add_argument("--max-items", type=int, default=12, help="Maximum items sent to the summarizer")
+    parser.add_argument("--max-items", type=int, default=10, help="Maximum items sent to the summarizer")
     parser.add_argument("--dry-run", action="store_true", help="Generate report without Discord delivery")
     return parser.parse_args()
 
@@ -195,42 +195,34 @@ def summarize_with_gemini(items: list[dict[str, Any]], report_date: str) -> str:
     payload = json.dumps(items, ensure_ascii=False, indent=2)
 
     prompt = f"""
-你是一位 AI 產業與研究情報編輯。請把以下資料整理成「易讀、精煉、繁體中文」的每日 AI Digest，供 Discord 頻道閱讀。
+你是一位 AI 新聞編輯。請從以下資料中挑出「真正重要」的 AI 新聞，整理成適合 Discord 的繁體中文短報。
 
 硬性規則：
 - 日期：{report_date}
-- 所有英文標題、摘要與論文內容都要翻譯成自然的繁體中文。
-- 不要逐字硬翻；請用台灣讀者容易理解的科技新聞語氣改寫。
-- 不要誇大。若只是推測或尚未證實，請明確標示。
-- 每則都要保留來源名稱與原始連結。
-- 控制在 1800 字以內。
+- 全部內容都要翻譯成自然的繁體中文。
+- 只選 3 到 5 則重點新聞；如果重要新聞不足 3 則，可以少於 3 則。
+- 優先順序：新模型/產品發布 > 重大公司官方公告 > 高影響研究 > 實用開源工具。
+- 排除太小的更新、重複新聞、純宣傳、沒有明確影響的文章。
+- 不要誇大；推測或未證實內容要標示。
+- 總字數控制在 900 字以內。
 - 不要使用表格。
-- 如果某個分類沒有重要內容，可以省略該分類。
+- 每則都要保留來源名稱與原始連結。
 
 請使用這個固定格式：
 
-**AI 每日快報 - {report_date}**
+**AI 重點快報 - {report_date}**
 
-**今日重點**
-用 2 到 3 句話總結今天最值得注意的 AI 動態。
+**今日焦點**
+用 1 到 2 句話說明今天最重要的方向。
 
-**模型與產品更新**
-- **中文標題**：一句話說明發生什麼事。
-  影響：用一句話說明對開發者、研究者或產品團隊的意義。
-  來源：來源名稱 - 連結
+**重點新聞**
+1. **中文標題**
+   重點：一句話說明發生什麼事。
+   重要性：一句話說明為什麼值得注意。
+   來源：來源名稱 - 連結
 
-**研究與論文**
-- **中文論文標題**：一句話說明研究在做什麼。
-  重點：用一句話說明技術亮點或限制。
-  來源：來源名稱 - 連結
-
-**開源與工具**
-- **中文標題**：一句話說明工具或專案更新。
-  適合誰看：指出開發者、研究者、產品團隊或一般使用者。
-  來源：來源名稱 - 連結
-
-**趨勢觀察**
-用 1 到 2 句話指出今天資料中呈現的共同方向。
+**一句話觀察**
+用一句話總結今天 AI 動態的共同趨勢。
 
 資料：
 {payload}
